@@ -44,4 +44,15 @@
         android:layout_marginTop="16dp"
         android:padding="16dp"/>
 
+
+    <!-- Google Sign-In Button -->
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/googleSignInButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/signUpButton"
+        app:layout_constraintStart_toStartOf="@+id/signUpButton"
+        app:layout_constraintTop_toBottomOf="@id/signUpButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
