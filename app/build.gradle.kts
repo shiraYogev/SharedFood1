@@ -33,19 +33,24 @@ android {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
+    // Firebase BoM to manage versions of Firebase libraries
+    implementation(platform("com.google.firebase:firebase-bom:32.1.0")) // Update to the latest BoM version
+
+    // Firebase libraries (no need to specify versions, they will be managed by the BoM)
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
+    // Other dependencies
+    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    // Play services (for authentication)
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
 
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    // Test dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
