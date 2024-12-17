@@ -46,14 +46,47 @@
         android:layout_marginTop="16dp"
         android:padding="16dp" />
 
+    <!-- ScrollView for Terms and Conditions -->
+    <ScrollView
+        android:id="@+id/termsScrollView"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@id/confirmPasswordEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <!-- TextView for Terms and Conditions -->
+        <TextView
+            android:id="@+id/termsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/terms_and_conditions"
+            android:textSize="14sp"
+            android:padding="8dp" />
+
+    </ScrollView>
+
+    <CheckBox
+        android:id="@+id/termsCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="קראתי והסכמתי לתקנון"
+        app:layout_constraintTop_toBottomOf="@id/termsScrollView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+
+
     <!-- Sign Up Button -->
     <Button
         android:id="@+id/signUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
         android:text="Sign Up"
-        app:layout_constraintTop_toBottomOf="@id/confirmPasswordEditText"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/confirmPasswordEditText" />
 </androidx.constraintlayout.widget.ConstraintLayout>
