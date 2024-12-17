@@ -2,10 +2,14 @@ package com.example.sharedfood;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +41,16 @@ public class SignUpActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText);
         signUpButton = findViewById(R.id.signUpButton);
+        ScrollView scroll = findViewById(R.id.termsScrollView);
+        TextView textView = findViewById(R.id.termsTextView);
+        CheckBox termsCheckBox = findViewById(R.id.termsCheckBox);
+
+
+        textView.setText(Html.fromHtml(getString(R.string.terms_and_conditions), Html.FROM_HTML_MODE_LEGACY));
+
+        termsCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            signUpButton.setEnabled(isChecked); // הפעלת הכפתור רק אם ה-CheckBox מסומן
+        });
 
         signUpButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
@@ -50,6 +64,12 @@ public class SignUpActivity extends AppCompatActivity {
 
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(SignUpActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // תנאי חדש: בדיקה אם ה-CheckBox לא מסומן
+            if (!termsCheckBox.isChecked()) {
+                Toast.makeText(SignUpActivity.this, "Please read and agree to the terms and conditions", Toast.LENGTH_SHORT).show();
                 return;
             }
 
