@@ -8,6 +8,6 @@
     <color name="red_color">#FF0000</color>
     <color name="blue_color">#2196F3</color>
     <color name="chip_background_color">#84B884</color>
-    <color name="green_light">#90EE90</color> <!-- ירוק בהיר -->
-
+    <color name="green_light">#B0DCB0</color>
+    <color name="gray">#737873</color>
 </resources>

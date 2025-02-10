@@ -5,8 +5,6 @@
     <string name="fb_login_protocol_scheme">fb1093000132560754</string>
     <string name="facebook_client_token">40a1d5d11693a006ac19ab1859e211bc</string>
     <string name="title_activity_facebook">FacebookActivity</string>
-    <string name="chat_button_description">לחצן צאט</string>
-
 
 
     <string name="terms_and_conditions">
