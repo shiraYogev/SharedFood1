@@ -22,17 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FeedActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private PostAdapter adapter;
-    private FirebaseFirestore db;
-    private TextView emptyStateText;
+    protected RecyclerView recyclerView;
+    protected PostAdapter adapter;
+    protected FirebaseFirestore db;
+    protected TextView emptyStateText;
     private EditText cityInput;
-    private List<Post> postsList;
+    protected List<Post> postsList;
 
     // Filters CheckBoxes
-    private CheckBox extraKosherCheckBox, frizerCheckBox, pastriesCheckBox, vegetablesCheckBox,
-            kosherCheckBox,veganCheckBox, vegetarianCheckBox, glutenFreeCheckBox, hotCheckBox,
-            coldCheckBox, closedCheckBox, dairyCheckBox, meatCheckBox;
+    protected CheckBox extraKosherCheckBox, frizerCheckBox, pastriesCheckBox,
+            vegetablesCheckBox, kosherCheckBox,veganCheckBox, vegetarianCheckBox,
+            glutenFreeCheckBox, hotCheckBox, coldCheckBox, closedCheckBox,
+            dairyCheckBox, meatCheckBox;
+
 
     private static final String TAG = "FeedActivity";
 
@@ -78,31 +80,16 @@ public class FeedActivity extends AppCompatActivity {
     /**
      * Sets up the RecyclerView with a LinearLayoutManager and adapter.
      */
-    private void setupRecyclerView() {
+    protected void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Create and set adapter with PostClickListener
-        adapter = new PostAdapter(this, postsList, new PostAdapter.PostClickListener() {
-            @Override
-            public void onEditClick(Post post) {
-                // Logic for editing a post (e.g., open edit activity)
-                Toast.makeText(FeedActivity.this, "Edit clicked for post: " + post.getDescription(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onDeleteClick(Post post) {
-                // Logic for deleting a post (e.g., delete from Firebase)
-                Toast.makeText(FeedActivity.this, "Delete clicked for post: " + post.getDescription(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        adapter = new PostAdapter(postsList);
         recyclerView.setAdapter(adapter);
     }
 
     /**
      * Listens for user input in the city search field and updates the post list.
      */
-    private void setupCityInputListener() {
+    protected void setupCityInputListener() {
         cityInput.setOnEditorActionListener((v, actionId, event) -> {
             String city = cityInput.getText().toString().trim();
             loadPosts(city);
@@ -115,7 +102,7 @@ public class FeedActivity extends AppCompatActivity {
      *
      * @param city the city to filter posts by
      */
-    private void loadPosts(String city) {
+    protected void loadPosts(String city) {
         db.collection("posts")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -125,7 +112,6 @@ public class FeedActivity extends AppCompatActivity {
                             try {
                                 Post post = new Post();
                                 post.setDescription(document.getString("description"));
-                                post.setUserId(document.getString("userId")); // שליפת מזהה המשתמש
 
                                 // Decode image from Base64
                                 String base64Image = document.getString("imageBase64");
@@ -163,7 +149,7 @@ public class FeedActivity extends AppCompatActivity {
     /**
      * Adds listeners to all filter checkboxes to reload posts when toggled.
      */
-    private void setupFilterListeners() {
+    protected void setupFilterListeners() {
         CheckBox[] checkBoxes = {
                 extraKosherCheckBox, frizerCheckBox, pastriesCheckBox, vegetablesCheckBox,
                 kosherCheckBox,veganCheckBox, vegetarianCheckBox, glutenFreeCheckBox, hotCheckBox,
@@ -181,7 +167,7 @@ public class FeedActivity extends AppCompatActivity {
      * @param post the post to check
      * @return true if the post matches all selected filters
      */
-    private boolean isPostMatchingFilters(Post post) {
+    protected boolean isPostMatchingFilters(Post post) {
         if (kosherCheckBox.isChecked() && !post.hasFilter("Kosher")) return false;
         if (veganCheckBox.isChecked() && !post.hasFilter("vegan")) return false;
         if (vegetarianCheckBox.isChecked() && !post.hasFilter("vegetarian")) return false;
@@ -202,7 +188,7 @@ public class FeedActivity extends AppCompatActivity {
     /**
      * Updates the UI to show or hide the empty state message.
      */
-    private void updateEmptyState() {
+    protected void updateEmptyState() {
         if (postsList.isEmpty()) {
             emptyStateText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
@@ -218,7 +204,7 @@ public class FeedActivity extends AppCompatActivity {
      * @param base64String the Base64 encoded string
      * @return the decoded Bitmap, or null if decoding fails
      */
-    private Bitmap decodeBase64ToBitmap(String base64String) {
+    protected Bitmap decodeBase64ToBitmap(String base64String) {
         try {
             byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);

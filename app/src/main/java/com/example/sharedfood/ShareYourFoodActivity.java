@@ -69,7 +69,10 @@ public class ShareYourFoodActivity extends AppCompatActivity {
     protected List<String> selectedFilters = new ArrayList<>();
     protected Post post;
     protected EditText cityEditText;
-    protected CheckBox extraKosherCheckBox, frizerCheckBox, pastriesCheckBox, vegetablesCheckBox, kosherCheckBox,veganCheckBox, vegetarianCheckBox, glutenFreeCheckBox, hotCheckBox, coldCheckBox, closedCheckBox, dairyCheckBox, meatCheckBox;
+    protected CheckBox extraKosherCheckBox, frizerCheckBox, pastriesCheckBox,
+            vegetablesCheckBox, kosherCheckBox,veganCheckBox, vegetarianCheckBox,
+            glutenFreeCheckBox, hotCheckBox, coldCheckBox, closedCheckBox,
+            dairyCheckBox, meatCheckBox;
 
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -416,7 +419,7 @@ public class ShareYourFoodActivity extends AppCompatActivity {
         foodPost.put("filters", post.getFilters());
         foodPost.put("imageUri", post.getImageUri());
         foodPost.put("imageBase64", post.getImageBase64()); // שמירת Base64
-        foodPost.put("userId", post.getUserId()); //
+        foodPost.put("userId", post.getUserId());
         foodPost.put("location", post.getLocation());
         foodPost.put("city", post.getCity());
         foodPost.put("timestamp", System.currentTimeMillis());

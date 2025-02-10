@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
 
-    private Button loginButton;
+    Button loginButton;
 
     private void checkIfUserIsBannedOrAdmin(FirebaseUser user) {
         if (user == null) {

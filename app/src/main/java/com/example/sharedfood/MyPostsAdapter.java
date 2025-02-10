@@ -74,8 +74,6 @@ public class MyPostsAdapter extends RecyclerView.Adapter<MyPostsAdapter.PostView
         // תיאור
         holder.descriptionText.setText(post.getDescription() != null ? post.getDescription() : "תיאור לא זמין");
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // טיפול בתמונה
         if (post.getImageBitmap() != null) {
             holder.imageView.setImageBitmap(post.getImageBitmap());
@@ -83,8 +81,6 @@ public class MyPostsAdapter extends RecyclerView.Adapter<MyPostsAdapter.PostView
         } else {
             holder.imageView.setVisibility(View.GONE);
         }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // מיקום
         holder.locationText.setText(post.getCity() != null ? post.getCity() : "מיקום לא זמין");
@@ -115,4 +111,4 @@ public class MyPostsAdapter extends RecyclerView.Adapter<MyPostsAdapter.PostView
     public int getItemCount() {
         return posts.size();
     }
-} //+2 + Tipul Betmuna Shira
+}
