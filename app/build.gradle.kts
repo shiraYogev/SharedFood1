@@ -4,7 +4,8 @@ plugins {
 
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.kapt)}
+    alias(libs.plugins.kotlin.kapt)
+}
 
 android {
     namespace = "com.example.sharedfood"
@@ -112,7 +113,26 @@ dependencies {
     implementation(libs.activity)
 
     // Test dependencies
-    testImplementation("junit:junit:4.13.2")
+    //testImplementation("junit:junit:4.13.2")  // כבר יש את השורה הזו
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("org.mockito:mockito-android:4.5.1")
+
+    // ספריות לבדיקה עם Mockito ו-JUnit
+
+
+    testImplementation("org.mockito:mockito-core:4.5.1")
+    testImplementation("org.mockito:mockito-inline:4.5.1")
+
+
+
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("androidx.test:runner:1.5.2")
+    testImplementation("androidx.test:rules:1.5.0")
+
+    testImplementation("com.google.firebase:firebase-firestore:24.4.2")
+
+
+
 }

@@ -57,7 +57,7 @@ import java.util.List;
         recyclerView.setAdapter(adapter);
     }
 
-        private void loadAllPosts() {
+        public void loadAllPosts() {
             db.collection("posts")
                     .get()
                     .addOnCompleteListener(task -> {
@@ -151,7 +151,7 @@ import java.util.List;
                 .show();
     }
 
-    private void deletePost(Post post) {
+    public void deletePost(Post post) {
         db.collection("posts")
                 .document(post.getId())
                 .delete()
@@ -171,4 +171,13 @@ import java.util.List;
             return null;
         }
     }
-}
+
+    public FirebaseFirestore getDb() {
+        return db;
+    }
+    public void setDb(FirebaseFirestore db) {
+        this.db = db;
+    }
+
+
+    }
