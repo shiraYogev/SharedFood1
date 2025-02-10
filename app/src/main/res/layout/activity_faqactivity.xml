@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FAQActivity"
+    android:background="@color/green_light"> <!-- רקע ירוק בהיר -->
+
+    <!-- שאלות נפוצות - בעיות טכניות ושאלות על פוסטים -->
+    <!-- רקע עם פינות מעוגלות וצל -->
+    <TextView
+        android:id="@+id/question1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="איך אני משתף אוכל עם אחרים?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/answer1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="לחץ/י על הכתור שתף אוכל או על הפלוס בדף הבית, הוסף/י תיאור, והעלה/י תמונה של האוכל. אל תשכח/י לבחור את הפילטרים המתאימים!"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question1"/>
+
+    <TextView
+        android:id="@+id/question2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="מה לעשות אם אני לא רואה את הפוסט שלי אחרי שפרסמתי אותו?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer1"/>
+
+    <TextView
+        android:id="@+id/answer2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="ודא/י שהאינטרנט שלך מחובר, ונסה/י לעדכן את האפליקציה לגרסה האחרונה. אם הבעיה נמשכת, כדאי לנסות להיכנס שוב לחשבון שלך."
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question2"/>
+
+    <TextView
+        android:id="@+id/question3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="איך אני יכול/ה לערוך פוסט שיש בו טעות?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer2"/>
+
+    <TextView
+        android:id="@+id/answer3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=" .לחץ/י על אופציית הפוסטים שלי, ובחר/י את הפוסט וערוך/י אותו או מחק/י אותו."
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question3"/>
+
+    <TextView
+        android:id="@+id/question4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="האם אני יכול/ה להעלות פוסט בלי תמונה או תיאור?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer3"/>
+
+    <TextView
+        android:id="@+id/answer4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="לא, עליך להוסיף תמונה ותיאור לפוסט כדי לשתף אותו עם אחרים. זו הדרך שלנו לוודא שהפוסט שלך מצוין ומובן לאחרים."
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question4"/>
+
+    <TextView
+        android:id="@+id/question5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="איך אני מחפש/ת פוסטים לפי סינונים ומיקום?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer4"/>
+
+    <TextView
+        android:id="@+id/answer5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="באפשרותך לחפש פוסטים לפי פילטרים של סינונים (חם/קר/וכו') וגם לפי מיקום. כל מה שעליך לעשות הוא לבחור את הסינון והמיקום הרצוי במסך הפיד."
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question5"/>
+
+    <!-- שאלות חשבונות ומידע אישי -->
+    <TextView
+        android:id="@+id/question6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="איך אני מתנתק/ת מהאפליקציה?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer5"/>
+
+    <TextView
+        android:id="@+id/answer6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="כדי להתנתק, עבור לתפריט ההגדרות במידע האישי ולחץ על &quot;התנתקות&quot;. תוכל להיכנס שוב בכל זמן עם כתובת הדואר האלקטרוני והסיסמה שלך."
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question6"/>
+
+    <TextView
+        android:id="@+id/question7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="איך אני מוחק את החשבון שלי?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_button_green"
+        android:textColor="#FFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer6"/>
+
+    <TextView
+        android:id="@+id/answer7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="דרך ההגדרות במידע האישי יש אופציה למחוק את החשבון לגמרי"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question7"/>
+
+    <!-- בעיות כלשהן -->
+    <TextView
+        android:id="@+id/question8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="🌐 בעיות כלשהן?"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:textColor="#FF5722"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer7"/>
+
+    <TextView
+        android:id="@+id/answer8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="אם הגעת עד כאן ולא מצאת תשובה לשאלתך, אנחנו כאן כדי לעזור! תוכל/י לפנות אלינו בכל עת דרך דף ה&quot;צור קשר&quot; שלנו ונחזור אליך בהקדם."
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question8"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

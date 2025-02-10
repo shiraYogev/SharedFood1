@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F4F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ערוך פוסט"
+            android:textSize="24sp"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"
+            android:background="#E0E0E0"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/foodDescriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="תיאור המזון"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/cityEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="עיר"
+            android:inputType="text"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="סנן לפי:"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:layout_marginBottom="16dp">
+
+            <CheckBox android:id="@+id/meatCheckBox" android:text="בשרי" />
+            <CheckBox android:id="@+id/dairyCheckBox" android:text="חלבי" />
+            <CheckBox android:id="@+id/hotCheckBox" android:text="חם" />
+            <CheckBox android:id="@+id/coldCheckBox" android:text="קר" />
+            <CheckBox android:id="@+id/kosherCheckBox" android:text="כשר" />
+            <CheckBox android:id="@+id/veganCheckBox" android:text="טבעוני" />
+            <CheckBox android:id="@+id/vegetarianCheckBox" android:text="צמחוני" />
+            <CheckBox android:id="@+id/glutenFreeCheckBox" android:text="ללא גלוטן" />
+            <CheckBox android:id="@+id/extraKosherCheckBox" android:text="כשר למהדרין" />
+            <CheckBox android:id="@+id/frizerCheckBox" android:text="מהפריזר" />
+            <CheckBox android:id="@+id/pastriesCheckBox" android:text="מאפים" />
+            <CheckBox android:id="@+id/vegetablesCheckBox" android:text="ירקות ופירות" />
+        </GridLayout>
+
+        <Button
+            android:id="@+id/updatePostButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="עדכן פוסט"
+            android:background="#4CAF50"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>

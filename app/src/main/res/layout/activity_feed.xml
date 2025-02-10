@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/chip_background_color">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- שדה חיפוש להזנת עיר -->
+        <EditText
+            android:id="@+id/cityInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="הקלד את שם העיר"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:inputType="text"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- HorizontalScrollView לפילטרים -->
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/cityInput"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Filter CheckBoxes -->
+                <CheckBox
+                    android:id="@+id/kosherCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="כשר"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/veganCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="טבעוני"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/vegetarianCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="צמחוני"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/glutenFreeCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ללא גלוטן"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/hotCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="חם"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/coldCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="קר"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/closedCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="סגור"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/dairyCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="חלב"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/meatCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="בשר"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/extraKosherCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="כשר נוסף"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/frizerCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="מקפיא"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/pastriesCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="מאפים"
+                    android:layout_marginEnd="8dp" />
+
+                <CheckBox
+                    android:id="@+id/vegetablesCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="פירות וירקות"
+                    android:layout_marginEnd="8dp" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- טקסט אם אין פוסטים -->
+        <TextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="אין פוסטים זמינים"
+            android:textColor="@color/green_color_dark"
+            android:visibility="gone"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/horizontalScrollView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- RecyclerView להצגת פוסטים -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/postsRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/emptyStateText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

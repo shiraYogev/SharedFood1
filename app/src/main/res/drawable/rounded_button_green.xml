@@ -1,0 +1,6 @@
+<!-- res/drawable/rounded_button_green.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#4CAF50"/> <!-- ירוק -->
+    <corners android:radius="16dp"/> <!-- פינות מעוגלות -->
+    <padding android:left="12dp" android:top="8dp" android:right="12dp" android:bottom="8dp"/> <!-- ריפוד -->
+</shape>
