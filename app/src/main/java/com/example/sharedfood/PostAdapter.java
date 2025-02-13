@@ -1,5 +1,7 @@
 package com.example.sharedfood;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.example.sharedfood.post.Post;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -19,9 +21,11 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private List<Post> posts;
     private PostClickListener listener;
+    private Context context;
 
-    public PostAdapter(List<Post> posts) {
+    public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
+        this.context = context;
     }
 
     public interface PostClickListener {
@@ -29,48 +33,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         void onDeleteClick(Post post);
     }
 
-    public PostAdapter(List<Post> posts, PostClickListener listener) {
-        this.posts = posts;
-        this.listener = listener;
-    }
-
-    public static class PostViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView descriptionText;
-        TextView locationText;
-        ChipGroup filtersChipGroup;
-        ImageButton editButton;
-        ImageButton deletePostButton;
-
-        public PostViewHolder(View view) {
-            super(view);
-            imageView = view.findViewById(R.id.postImage);
-            descriptionText = view.findViewById(R.id.postDescription);
-            locationText = view.findViewById(R.id.postLocation);
-            filtersChipGroup = view.findViewById(R.id.filtersChipGroup);
-            editButton = view.findViewById(R.id.editPostButton);
-            deletePostButton = view.findViewById(R.id.deletePostButton);
-        }
-    }
-
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.post_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
         return new PostViewHolder(view);
     }
 
+    @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = posts.get(position);
 
-        // הצגת התיאור
         holder.descriptionText.setText(post.getDescription() != null ? post.getDescription() : "No description available");
-
-        // הצגת מיקום
         holder.locationText.setText(post.getCity() != null ? post.getCity() : "Location unavailable");
 
-        // הצגת פילטרים
+        // Add filters (if any)
         holder.filtersChipGroup.removeAllViews();
         if (post.getFilters() != null) {
             for (String filter : post.getFilters()) {
@@ -81,7 +58,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
         }
 
-        // הצגת תמונה
+        // Add image if available
         if (post.getImageBitmap() != null) {
             holder.imageView.setImageBitmap(post.getImageBitmap());
             holder.imageView.setVisibility(View.VISIBLE);
@@ -89,10 +66,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.imageView.setVisibility(View.GONE);
         }
 
+        // Set up chat button click
+        holder.chatButton.setOnClickListener(v -> {
+            // Open ChatActivity and pass the userId of the post owner
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("userId", post.getUserId());  // Pass the owner userId
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
         return posts.size();
+    }
+
+    public static class PostViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        TextView descriptionText;
+        TextView locationText;
+        ChipGroup filtersChipGroup;
+        ImageButton chatButton;  // Add chat button
+
+        public PostViewHolder(View view) {
+            super(view);
+            imageView = view.findViewById(R.id.postImage);
+            descriptionText = view.findViewById(R.id.postDescription);
+            locationText = view.findViewById(R.id.postLocation);
+            filtersChipGroup = view.findViewById(R.id.filtersChipGroup);
+            chatButton = view.findViewById(R.id.chatButton);  // Initialize chat button
+        }
     }
 }

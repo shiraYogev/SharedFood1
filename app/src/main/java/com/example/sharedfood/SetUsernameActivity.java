@@ -38,11 +38,12 @@ public class SetUsernameActivity extends AppCompatActivity {
             }
 
             String userEmail = mAuth.getCurrentUser().getEmail();
+            String userId = mAuth.getCurrentUser().getUid(); // Get the current user's ID
 
             if (userEmail != null) {
                 db.collection("users")
                         .document(userEmail)
-                        .update("username", username)
+                        .update("username", username, "userId", userId) // Add the user ID along with the username
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(SetUsernameActivity.this, "שם המשתמש נשמר בהצלחה", Toast.LENGTH_SHORT).show();
                             finish(); // Go back to the main activity

@@ -101,7 +101,7 @@ public class HomePageActivity extends AppCompatActivity {
         findViewById(R.id.chatButton).setOnClickListener(v -> {
             if (checkUserLogin()) { // בדיקת האם המשתמש מחובר
                 // אם כן, נעביר אותו לאקטיביטי של הצ'אטים
-                startActivity(new Intent(HomePageActivity.this, ChatActivity.class));
+                startActivity(new Intent(HomePageActivity.this, MyChatsActivity.class));
             }
         });
 

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.sharedfood.post.Post;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -82,7 +83,7 @@ public class FeedActivity extends AppCompatActivity {
      */
     protected void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PostAdapter(postsList);
+        adapter = new PostAdapter(postsList, this);
         recyclerView.setAdapter(adapter);
     }
 

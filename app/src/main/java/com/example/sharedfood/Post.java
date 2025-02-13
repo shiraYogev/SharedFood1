@@ -1,4 +1,4 @@
-package com.example.sharedfood;
+package com.example.sharedfood.post;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
