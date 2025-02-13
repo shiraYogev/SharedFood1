@@ -98,6 +98,13 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            if (checkUserLogin()) { // בדיקת האם המשתמש מחובר
+                // אם כן, נעביר אותו לאקטיביטי של הצ'אטים
+                startActivity(new Intent(HomePageActivity.this, ChatActivity.class));
+            }
+        });
+
         // כפתור "פיד"
         findViewById(R.id.feedButton).setOnClickListener(v -> {
             startActivity(new Intent(HomePageActivity.this, FeedActivity.class)); // מעבר למסך "פיד"
