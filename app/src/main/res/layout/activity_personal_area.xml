@@ -1,97 +1,32 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:ignore="ExtraText">
+    android:padding="16dp">
 
     <!-- פרטי המשתמש -->
     <TextView
         android:id="@+id/userDetailsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="האזור האישי שלי"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#1B5E20"
+        android:text="User Details"
+        android:textSize="18sp"
         android:layout_marginBottom="16dp" />
 
     <!-- כפתור התנתקות -->
-    <com.google.android.material.card.MaterialCardView
+    <Button
         android:id="@+id/logoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="8dp"
-        app:rippleColor="#33000000">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:background="@drawable/card_gradient_green">
-
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@drawable/ic_logout"
-                app:tint="#FFFFFF" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="התנתקות"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        android:text="Logout"
+        android:layout_marginBottom="16dp" />
 
     <!-- כפתור מחיקת חשבון -->
-    <com.google.android.material.card.MaterialCardView
+    <Button
         android:id="@+id/deleteAccountButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="8dp"
-        app:rippleColor="#33000000">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:background="#FFCDD2"> <!-- צבע אדום בהיר למחיקת חשבון -->
-
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@drawable/ic_delete"
-                app:tint="#FF0000" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="מחיקת חשבון"
-                android:textColor="#FF0000"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- הלוגו בתחתית -->
-    <ImageView
-        android:layout_width="195dp"
-        android:layout_height="87dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:src="@drawable/logo" />
+        android:text="Delete Account"
+        android:textColor="#FF0000" />
 </LinearLayout>
