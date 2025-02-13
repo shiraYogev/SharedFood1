@@ -182,7 +182,7 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
-    private Long calculateExpirationTime(QueryDocumentSnapshot document) {
+    public Long calculateExpirationTime(QueryDocumentSnapshot document) {
         Long timestamp = document.getLong("timestamp"); // זמן היצירה של הפוסט
         if (timestamp == null) return Long.MAX_VALUE; // אם אין זמן יצירה, לא למחוק את הפוסט
 

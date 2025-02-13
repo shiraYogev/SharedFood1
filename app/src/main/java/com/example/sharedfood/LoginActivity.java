@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,32 +20,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText, passwordEditText;
 
     Button loginButton;
+    TextView registerLink;
 
-    private void checkIfUserIsBannedOrAdmin(FirebaseUser user) {
-        if (user == null) {
-            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        FirebaseFirestore.getInstance().collection("banned_users")
-                .document(user.getEmail()) 
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Toast.makeText(this, "Your account is banned. Contact support.", Toast.LENGTH_SHORT).show();
-                        FirebaseAuth.getInstance().signOut(); 
-                        finish(); 
-                    } else {
-                        checkIfUserIsAdmin(user);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("LoginActivity", "Failed to check ban status", e);
-                    Toast.makeText(this, "Error checking ban status. Please try again.", Toast.LENGTH_SHORT).show();
-                    FirebaseAuth.getInstance().signOut();
-                    finish(); 
-                });
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +33,14 @@ public class LoginActivity extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText); 
-        loginButton = findViewById(R.id.loginButton); 
+        loginButton = findViewById(R.id.loginButton);
+        registerLink = findViewById(R.id.registerLink);
+
+        // ניווט למסך ההרשמה בלחיצה על הלינק
+        registerLink.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(intent);
+        });
 
         loginButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
@@ -106,7 +90,31 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void checkIfUserIsBannedOrAdmin(FirebaseUser user) {
+        if (user == null) {
+            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        FirebaseFirestore.getInstance().collection("banned_users")
+                .document(user.getEmail())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Toast.makeText(this, "Your account is banned. Contact support.", Toast.LENGTH_SHORT).show();
+                        FirebaseAuth.getInstance().signOut();
+                        finish();
+                    } else {
+                        checkIfUserIsAdmin(user);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("LoginActivity", "Failed to check ban status", e);
+                    Toast.makeText(this, "Error checking ban status. Please try again.", Toast.LENGTH_SHORT).show();
+                    FirebaseAuth.getInstance().signOut();
+                    finish();
+                });
+    }
     private void checkIfUserIsAdmin(FirebaseUser user) {
         MainActivity.isAdmin(user, isAdmin -> {
             if (isAdmin) {

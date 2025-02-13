@@ -167,5 +167,9 @@ public class Post implements Parcelable {
         if (filters == null) return false;
         return filters.contains(filter);
     }
+
+    public int setTimestamp(long l) {
+        return 0;
+    }
     ////////////////////////////////////////////////////////////////////
 }

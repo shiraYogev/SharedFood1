@@ -35,8 +35,8 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
 // Michael END 14/1/2025
     private RecyclerView recyclerView;
     private MyPostsAdapter adapter;
-    private FirebaseFirestore db;
-    private FirebaseAuth auth;
+    FirebaseFirestore db;
+    FirebaseAuth auth;
     private TextView emptyStateText;
     private List<Post> postsList;
     private String currentUserId;
