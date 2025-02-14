@@ -31,7 +31,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.sharedfood.post.Post;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.firebase.firestore.FirebaseFirestore;
