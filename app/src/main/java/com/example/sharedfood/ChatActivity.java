@@ -1,5 +1,8 @@
 package com.example.sharedfood;
 
+import com.example.sharedfood.chat.*;  // ייבוא כל המחלקות שבחבילה chat
+
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -79,9 +82,12 @@ public class ChatActivity extends AppCompatActivity {
                             if (change.getType() == DocumentChange.Type.ADDED) {
                                 QueryDocumentSnapshot doc = change.getDocument();
                                 Message message = new Message(
-                                        doc.getString("text"),
-                                        doc.getLong("timestamp")
+                                        doc.getString("sender"),        // פרמטר נוסף (נניח שם השולח)
+                                        doc.getString("receiver"),      // פרמטר נוסף (נניח שם המקבל)
+                                        doc.getString("text"),          // הטקסט של ההודעה
+                                        String.valueOf(doc.getLong("timestamp")) // תאריך ושעה (להמיר ל-String אם צריך)
                                 );
+
                                 messagesList.add(message);
                             }
                         }
