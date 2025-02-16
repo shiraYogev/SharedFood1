@@ -51,6 +51,11 @@ configurations.all {
 }
 
 dependencies {
+    testImplementation ("org.mockito:mockito-core:5.4.0")
+    testImplementation ("net.bytebuddy:byte-buddy:1.14.0")
+    testImplementation ("org.robolectric:robolectric:4.10")
+    testImplementation ("junit:junit:4.13.2")
+
     // Force Kotlin stdlib version
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
 
