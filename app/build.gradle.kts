@@ -52,7 +52,6 @@ configurations.all {
 
 dependencies {
     testImplementation ("org.mockito:mockito-core:5.4.0")
-    testImplementation ("net.bytebuddy:byte-buddy:1.14.0")
     testImplementation ("org.robolectric:robolectric:4.10")
     testImplementation ("junit:junit:4.13.2")
 
@@ -138,6 +137,10 @@ dependencies {
 
     testImplementation("com.google.firebase:firebase-firestore:24.4.2")
 
+    // Michael - please keep on them to the test of Admin - START
+    testImplementation("net.bytebuddy:byte-buddy:1.12.22") // או גרסה חדשה יותר אם זמינה
+    testImplementation("org.mockito:mockito-core:5.4.0")
+    // Michael - please keep on them to the test of Admin - End
 
 
 }
