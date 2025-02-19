@@ -1,32 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="8dp">
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="start">
 
-    <!-- טקסט ההודעה -->
+    <!-- הודעה -->
     <TextView
         android:id="@+id/messageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:background="@drawable/message_bg"
         android:padding="8dp"
-        android:layout_margin="4dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:background="@color/green_color"
+        android:textColor="#000000"/>
 
-    <!-- חותמת זמן -->
+    <!-- טקסט תאריך / זמן -->
     <TextView
         android:id="@+id/timestampText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:textColor="#666666"
-        app:layout_constraintTop_toBottomOf="@id/messageText"
-        app:layout_constraintStart_toStartOf="@id/messageText"
-        android:layout_marginTop="4dp"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textSize="12sp"
+        android:textColor="#A0A0A0"
+        android:layout_gravity="end"/>
+</LinearLayout>
