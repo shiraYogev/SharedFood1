@@ -1,12 +1,15 @@
 package com.example.sharedfood.chat;
+
+import com.google.firebase.Timestamp;
+
 public class Message {
     private String messageId;
     private String userId;
     private String messageText;
-    private String timestamp;
+    private Timestamp timestamp;  // שדה timestamp ישמר כ-String
 
     // Constructor
-    public Message(String messageId, String userId, String messageText, String timestamp) {
+    public Message(String messageId, String userId, String messageText, Timestamp timestamp) {
         this.messageId = messageId;
         this.userId = userId;
         this.messageText = messageText;
@@ -38,11 +41,11 @@ public class Message {
         this.messageText = messageText;
     }
 
-    public String getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 }

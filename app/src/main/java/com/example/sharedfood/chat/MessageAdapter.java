@@ -1,13 +1,18 @@
 package com.example.sharedfood.chat;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sharedfood.R;
+import com.google.firebase.Timestamp;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,10 +49,30 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Message message = messagesList.get(position);
         holder.messageText.setText(message.getMessageText());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        String time = sdf.format(new Date(message.getTimestamp()));
-        holder.timestampText.setText(time);
+        // הצגת ה-Timestamp כ-String
+        Timestamp timestamp = message.getTimestamp(); // השגת ה-Timestamp
+
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // השגת ה-userId של המשתמש הנוכחי
+
+        if (timestamp != null) {
+            String time = timestamp.toDate().toString(); // המרת ה-Timestamp ל-String
+            holder.timestampText.setText(time);
+        } else {
+            holder.timestampText.setText("");  // אם ה-Timestamp לא קיים
+        }
+
+        // אם ההודעה שייכת למשתמש הנוכחי
+        if (message.getUserId().equals(currentUserId)) {
+            // בצד ימין עם רקע ירוק בהיר
+            holder.messageText.setBackgroundResource(R.drawable.message_background_right);
+            holder.messageText.setGravity(Gravity.END);  // align to right
+        } else {
+            // בצד שמאל עם רקע ירוק כהה
+            holder.messageText.setBackgroundResource(R.drawable.message_background_left);
+            holder.messageText.setGravity(Gravity.START);  // align to left
+        }
     }
+
 
     @Override
     public int getItemCount() {

@@ -12,24 +12,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.sharedfood.chat.ChatManager;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private List<Post> posts;
-    private PostClickListener listener;
     private Context context;
+    private ChatManager chatManager;
 
     public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
         this.context = context;
-    }
-
-    public interface PostClickListener {
-        void onEditClick(Post post);
-        void onDeleteClick(Post post);
+        chatManager = new ChatManager();  // אתחול של ChatManager
     }
 
     @NonNull
@@ -67,10 +67,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         // Set up chat button click
         holder.chatButton.setOnClickListener(v -> {
-            // Open ChatActivity and pass the userId of the post owner
-            Intent intent = new Intent(context, ChatActivity.class);
-            intent.putExtra("userId", post.getUserId());  // Pass the owner userId
-            context.startActivity(intent);
+            // הוצא את מזהה המשתמש הנוכחי
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            // יצירת מזהה ייחודי לשיחה
+            String chatId = UUID.randomUUID().toString();
+
+            // המשתמש הנוכחי והמפרסם
+            String postUserId = post.getUserId(); // מזהה המפרסם
+
+            // יצירת צ'אט חדש
+            chatManager.createChat(chatId, currentUserId, postUserId);  // העברת מזהה המשתמש הנוכחי והמפרסם בנפרד
+
+            // מעבר לאקטיביטי של הצ'אט עם ה-chatId שנוצר
+            Intent intent = new Intent(holder.itemView.getContext(), ChatActivity.class);
+            intent.putExtra("chatId", chatId);
+            intent.putExtra("currentUserId", currentUserId);
+            holder.itemView.getContext().startActivity(intent);
         });
     }
 

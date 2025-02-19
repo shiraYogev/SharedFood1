@@ -82,7 +82,7 @@ public class FeedActivity extends AppCompatActivity {
      */
     protected void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PostAdapter(postsList, this);
+        adapter = new PostAdapter(postsList, this);  // הקונסטרוקטור מצפה ל-String בנוסף ל-List ו-Context
         recyclerView.setAdapter(adapter);
     }
 
@@ -112,6 +112,7 @@ public class FeedActivity extends AppCompatActivity {
                             try {
                                 Post post = new Post();
                                 post.setDescription(document.getString("description"));
+                                post.setUserId(document.getString("userId"));
 
                                 // Decode image from Base64
                                 String base64Image = document.getString("imageBase64");
