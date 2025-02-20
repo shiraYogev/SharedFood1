@@ -13,6 +13,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -238,5 +239,23 @@ public class EditPostActivity extends ShareYourFoodActivity {
         byte[] decodedBytes = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
+
+    public void updateSelectedFilters() {
+        selectedFilters = new ArrayList<>(); // יש להגדיר רשימה זו בתוך המחלקה אם טרם נעשה זאת
+
+        if (meatCheckBox.isChecked()) selectedFilters.add("Meat");
+        if (dairyCheckBox.isChecked()) selectedFilters.add("Dairy");
+        if (hotCheckBox.isChecked()) selectedFilters.add("Hot");
+        if (coldCheckBox.isChecked()) selectedFilters.add("Cold");
+        if (kosherCheckBox.isChecked()) selectedFilters.add("Kosher");
+        if (veganCheckBox.isChecked()) selectedFilters.add("vegan");
+        if (vegetarianCheckBox.isChecked()) selectedFilters.add("vegetarian");
+        if (glutenFreeCheckBox.isChecked()) selectedFilters.add("glutenFree");
+        if (extraKosherCheckBox.isChecked()) selectedFilters.add("extraKosher");
+        if (frizerCheckBox.isChecked()) selectedFilters.add("frizer");
+        if (pastriesCheckBox.isChecked()) selectedFilters.add("pastries");
+        if (vegetablesCheckBox.isChecked()) selectedFilters.add("vegetables&fruits");
+    }
+
 
 }
