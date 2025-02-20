@@ -56,7 +56,11 @@
             android:exported="true" />
         <activity
             android:name=".AdminListActivity"
-            android:exported="false" /> <!-- Michael, 26/01/2025 END -->
+            android:exported="false" />
+        <activity
+            android:name=".UserListActivity"
+            android:exported="false" />
+
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
