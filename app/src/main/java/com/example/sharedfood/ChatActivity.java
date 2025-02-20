@@ -1,98 +1,108 @@
 package com.example.sharedfood;
 
-import com.example.sharedfood.chat.*;  // ייבוא כל המחלקות שבחבילה chat
-
-
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.example.sharedfood.chat.ChatManager;
+import com.example.sharedfood.chat.Message;
+import com.example.sharedfood.chat.MessageAdapter;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
-    private String chatId;
-    private FirebaseFirestore db;
+    private RecyclerView messagesRecyclerView;
+    private MessageAdapter messageAdapter;
+    private List<Message> messagesList;
+    private ChatManager chatManager;
     private EditText messageInput;
     private ImageButton sendButton;
-    private RecyclerView messagesRecyclerView;
-    private MessageAdapter messagesAdapter;
-    private List<Message> messagesList = new ArrayList<>();
+    private String chatId;
+    private String currentUserId;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        db = FirebaseFirestore.getInstance();
+        // קבלת chatId ו-currentUserId מתוך Intent
         chatId = getIntent().getStringExtra("chatId");
-        Log.d("ChatActivity", "Chat opened with chatId: " + chatId);
+        currentUserId = getIntent().getStringExtra("currentUserId");
 
+        // אתחול של ChatManager ו-RecyclerView
+        chatManager = new ChatManager();
+        messagesList = new ArrayList<>();
+        messageAdapter = new MessageAdapter(messagesList);
+        messagesRecyclerView = findViewById(R.id.messagesRecyclerView);
+        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messagesRecyclerView.setAdapter(messageAdapter);
+
+        // אתחול של שדה ההודעה ושל כפתור השליחה
         messageInput = findViewById(R.id.messageInput);
         sendButton = findViewById(R.id.sendButton);
-        messagesRecyclerView = findViewById(R.id.messagesRecyclerView);
 
-        // הגדרת RecyclerView
-        messagesAdapter = new MessageAdapter(messagesList);
-        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        messagesRecyclerView.setAdapter(messagesAdapter);
-
-        sendButton.setOnClickListener(v -> sendMessage());
-
+        // טעינת ההודעות מהצ'אט
         loadMessages();
+
+        // הגדרת פעולה לכפתור לשליחת הודעה
+        sendButton.setOnClickListener(v -> sendMessage());
     }
 
+    // טעינת ההודעות מה-Firestore
+    private void loadMessages() {
+        chatManager.getMessages(chatId, task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot documentSnapshot = task.getResult();
+                messagesList.clear();
+                for (com.google.firebase.firestore.QueryDocumentSnapshot document : documentSnapshot) {
+                    String messageId = document.getId();
+                    String messageText = document.getString("messageText");
+                    Timestamp timestamp = document.getTimestamp("timestamp"); // עכשיו מקבלים Timestamp
+                    String userId = document.getString("userId");
+
+                    // יצירת Message חדש והוספתו לרשימה
+                    Message message = new Message(messageId, userId, messageText, timestamp);
+                    messagesList.add(message);
+                }
+
+                // עדכון ה-UI
+                messageAdapter.notifyDataSetChanged();
+                messagesRecyclerView.scrollToPosition(messagesList.size() - 1);  // גלילה למטה לאחר טעינת ההודעות
+            } else {
+                Toast.makeText(ChatActivity.this, "Failed to load messages", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // שליחת הודעה
     private void sendMessage() {
         String messageText = messageInput.getText().toString().trim();
-        if (!TextUtils.isEmpty(messageText)) {
-            Map<String, Object> msgData = new HashMap<>();
-            msgData.put("text", messageText);
-            msgData.put("timestamp", System.currentTimeMillis());
+        if (!messageText.isEmpty()) {
+            chatManager.sendMessage(chatId, currentUserId, messageText);
+            messageInput.setText("");  // ניקוי שדה ההודעה
 
-            db.collection("chats").document(chatId).collection("messages")
-                    .add(msgData)
-                    .addOnSuccessListener(documentReference -> messageInput.setText(""))
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(ChatActivity.this, "Message failed to send", Toast.LENGTH_SHORT).show();
-                    });
+            // הוספת ההודעה החדשה לרשימה
+            Timestamp timestamp = Timestamp.now(); // משתמש ב-Timestamp של Firebase
+            Message newMessage = new Message(
+                    "",  // id חדש ייווצר ב-Firestore
+                    currentUserId,
+                    messageText,
+                    timestamp  // Timestamp ישירות
+            );
+            messagesList.add(newMessage);
+            messageAdapter.notifyItemInserted(messagesList.size() - 1);
+            messagesRecyclerView.scrollToPosition(messagesList.size() - 1);  // גלילה למטה
+        } else {
+            Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void loadMessages() {
-        db.collection("chats").document(chatId).collection("messages")
-                .orderBy("timestamp", Query.Direction.ASCENDING)
-                .addSnapshotListener((value, error) -> {
-                    if (value != null) {
-                        for (DocumentChange change : value.getDocumentChanges()) {
-                            if (change.getType() == DocumentChange.Type.ADDED) {
-                                QueryDocumentSnapshot doc = change.getDocument();
-                                Message message = new Message(
-                                        doc.getString("sender"),        // פרמטר נוסף (נניח שם השולח)
-                                        doc.getString("receiver"),      // פרמטר נוסף (נניח שם המקבל)
-                                        doc.getString("text"),          // הטקסט של ההודעה
-                                        String.valueOf(doc.getLong("timestamp")) // תאריך ושעה (להמיר ל-String אם צריך)
-                                );
-
-                                messagesList.add(message);
-                            }
-                        }
-                        messagesAdapter.notifyDataSetChanged();
-                    }
-                });
     }
 }
