@@ -23,14 +23,14 @@ import java.util.UUID;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-    private List<Post> posts;
-    private Context context;
-    private ChatManager chatManager;
+    private List<Post> posts; // List of posts to display
+    private Context context; // Context for accessing resources and starting activities
+    private ChatManager chatManager; // Manager for chat functionalities
 
     public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
         this.context = context;
-        chatManager = new ChatManager();  // אתחול של ChatManager
+        chatManager = new ChatManager();  // Initialize ChatManager
     }
 
     @NonNull
@@ -68,19 +68,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         // Set up chat button click
         holder.chatButton.setOnClickListener(v -> {
-            // הוצא את מזהה המשתמש הנוכחי
-            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get current user ID
+            String chatId = UUID.randomUUID().toString(); // Generate a unique chat ID
+            String postUserId = post.getUserId(); // Get post user's ID
 
-            // יצירת מזהה ייחודי לשיחה
-            String chatId = UUID.randomUUID().toString();
+            // Create a new chat
+            chatManager.createChat(chatId, currentUserId, postUserId); // Pass current user ID and post user ID separately
 
-            // המשתמש הנוכחי והמפרסם
-            String postUserId = post.getUserId(); // מזהה המפרסם
-
-            // יצירת צ'אט חדש
-            chatManager.createChat(chatId, currentUserId, postUserId);  // העברת מזהה המשתמש הנוכחי והמפרסם בנפרד
-
-            // מעבר לאקטיביטי של הצ'אט עם ה-chatId שנוצר
+            // Start chat activity with the generated chat ID
             Intent intent = new Intent(holder.itemView.getContext(), ChatActivity.class);
             intent.putExtra("chatId", chatId);
             intent.putExtra("currentUserId", currentUserId);
@@ -90,7 +85,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public int getItemCount() {
-        return posts.size();
+        return posts.size(); // Return the number of posts
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
@@ -98,7 +93,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView descriptionText;
         TextView locationText;
         ChipGroup filtersChipGroup;
-        ImageButton chatButton;  // Add chat button
+        ImageButton chatButton;  // Chat button
 
         public PostViewHolder(View view) {
             super(view);
