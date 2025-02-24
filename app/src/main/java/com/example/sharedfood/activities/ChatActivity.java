@@ -19,26 +19,30 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity for handling chat interactions between users.
+ * It displays messages, allows sending new messages, and updates in real-time.
+ */
 public class ChatActivity extends AppCompatActivity {
-    private RecyclerView messagesRecyclerView;
-    private MessageAdapter messageAdapter;
-    private List<Message> messagesList;
-    private ChatManager chatManager;
-    private EditText messageInput;
-    private ImageButton sendButton;
-    private String chatId;
-    private String currentUserId;
+    private RecyclerView messagesRecyclerView; // RecyclerView for displaying messages
+    private MessageAdapter messageAdapter; // Adapter for message display
+    private List<Message> messagesList; // List of messages
+    private ChatManager chatManager; // Handles Firebase chat operations
+    private EditText messageInput; // Input field for messages
+    private ImageButton sendButton; // Button to send messages
+    private String chatId; // Chat identifier
+    private String currentUserId; // User ID of the current user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // קבלת chatId ו-currentUserId מתוך Intent
+        // Retrieve chatId and currentUserId from intent
         chatId = getIntent().getStringExtra("chatId");
         currentUserId = getIntent().getStringExtra("currentUserId");
 
-        // אתחול של ChatManager ו-RecyclerView
+        // Initialize ChatManager and RecyclerView
         chatManager = new ChatManager();
         messagesList = new ArrayList<>();
         messageAdapter = new MessageAdapter(messagesList);
@@ -46,18 +50,20 @@ public class ChatActivity extends AppCompatActivity {
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         messagesRecyclerView.setAdapter(messageAdapter);
 
-        // אתחול של שדה ההודעה ושל כפתור השליחה
+        // Initialize message input field and send button
         messageInput = findViewById(R.id.messageInput);
         sendButton = findViewById(R.id.sendButton);
 
-        // טעינת ההודעות מהצ'אט
+        // Load messages from Firestore
         loadMessages();
 
-        // הגדרת פעולה לכפתור לשליחת הודעה
+        // Set up click listener for the send button
         sendButton.setOnClickListener(v -> sendMessage());
     }
 
-    // טעינת ההודעות מה-Firestore
+    /**
+     * Loads messages from Firestore for the current chat.
+     */
     private void loadMessages() {
         chatManager.getMessages(chatId, task -> {
             if (task.isSuccessful()) {
@@ -66,41 +72,43 @@ public class ChatActivity extends AppCompatActivity {
                 for (com.google.firebase.firestore.QueryDocumentSnapshot document : documentSnapshot) {
                     String messageId = document.getId();
                     String messageText = document.getString("messageText");
-                    Timestamp timestamp = document.getTimestamp("timestamp"); // עכשיו מקבלים Timestamp
+                    Timestamp timestamp = document.getTimestamp("timestamp"); // Retrieve timestamp
                     String userId = document.getString("userId");
 
-                    // יצירת Message חדש והוספתו לרשימה
+                    // Create a new Message object and add it to the list
                     Message message = new Message(messageId, userId, messageText, timestamp);
                     messagesList.add(message);
                 }
 
-                // עדכון ה-UI
+                // Update UI with new messages
                 messageAdapter.notifyDataSetChanged();
-                messagesRecyclerView.scrollToPosition(messagesList.size() - 1);  // גלילה למטה לאחר טעינת ההודעות
+                messagesRecyclerView.scrollToPosition(messagesList.size() - 1); // Scroll to the latest message
             } else {
                 Toast.makeText(ChatActivity.this, "Failed to load messages", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // שליחת הודעה
+    /**
+     * Sends a new message to Firestore.
+     */
     private void sendMessage() {
         String messageText = messageInput.getText().toString().trim();
         if (!messageText.isEmpty()) {
             chatManager.sendMessage(chatId, currentUserId, messageText);
-            messageInput.setText("");  // ניקוי שדה ההודעה
+            messageInput.setText(""); // Clear message input field
 
-            // הוספת ההודעה החדשה לרשימה
-            Timestamp timestamp = Timestamp.now(); // משתמש ב-Timestamp של Firebase
+            // Add the new message to the list
+            Timestamp timestamp = Timestamp.now(); // Get the current timestamp
             Message newMessage = new Message(
-                    "",  // id חדש ייווצר ב-Firestore
+                    "",  // ID will be generated in Firestore
                     currentUserId,
                     messageText,
-                    timestamp  // Timestamp ישירות
+                    timestamp // Use Firebase timestamp
             );
             messagesList.add(newMessage);
             messageAdapter.notifyItemInserted(messagesList.size() - 1);
-            messagesRecyclerView.scrollToPosition(messagesList.size() - 1);  // גלילה למטה
+            messagesRecyclerView.scrollToPosition(messagesList.size() - 1); // Scroll to the latest message
         } else {
             Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
         }

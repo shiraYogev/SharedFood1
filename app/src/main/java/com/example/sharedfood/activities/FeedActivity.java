@@ -24,6 +24,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * FeedActivity is responsible for displaying the list of available food posts.
+ * Users can filter posts by category and city.
+ */
 public class FeedActivity extends AppCompatActivity {
     protected RecyclerView recyclerView;
     protected PostAdapter adapter;
@@ -34,10 +38,9 @@ public class FeedActivity extends AppCompatActivity {
 
     // Filters CheckBoxes
     protected CheckBox extraKosherCheckBox, frizerCheckBox, pastriesCheckBox,
-            vegetablesCheckBox, kosherCheckBox,veganCheckBox, vegetarianCheckBox,
+            vegetablesCheckBox, kosherCheckBox, veganCheckBox, vegetarianCheckBox,
             glutenFreeCheckBox, hotCheckBox, coldCheckBox, closedCheckBox,
             dairyCheckBox, meatCheckBox;
-
 
     private static final String TAG = "FeedActivity";
 
@@ -46,16 +49,16 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-        // Initialize Firebase
+        // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Initialize views
+        // Initialize UI components
         recyclerView = findViewById(R.id.postsRecyclerView);
         emptyStateText = findViewById(R.id.emptyStateText);
         cityInput = findViewById(R.id.cityInput);
         postsList = new ArrayList<>();
 
-        // Initialize filters
+        // Initialize filter checkboxes
         kosherCheckBox = findViewById(R.id.kosherCheckBox);
         hotCheckBox = findViewById(R.id.hotCheckBox);
         coldCheckBox = findViewById(R.id.coldCheckBox);
@@ -70,27 +73,27 @@ public class FeedActivity extends AppCompatActivity {
         pastriesCheckBox = findViewById(R.id.pastriesCheckBox);
         vegetablesCheckBox = findViewById(R.id.vegetablesCheckBox);
 
+        // Setup RecyclerView and listeners
         setupRecyclerView();
-
-        // Add listeners to filters and city input
         setupFilterListeners();
         setupCityInputListener();
 
-        // Load all posts initially
+        // Load all posts initially (without city filter)
         loadPosts("");
     }
 
     /**
-     * Sets up the RecyclerView with a LinearLayoutManager and adapter.
+     * Configures the RecyclerView with a LinearLayoutManager and PostAdapter.
      */
     protected void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PostAdapter(postsList, this);  // הקונסטרוקטור מצפה ל-String בנוסף ל-List ו-Context
+        adapter = new PostAdapter(postsList, this);
         recyclerView.setAdapter(adapter);
     }
 
     /**
-     * Listens for user input in the city search field and updates the post list.
+     * Sets up a listener for the city input field.
+     * When the user presses "Enter", the post list updates based on the entered city.
      */
     protected void setupCityInputListener() {
         cityInput.setOnEditorActionListener((v, actionId, event) -> {
@@ -101,9 +104,9 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     /**
-     * Fetches posts from Firestore and applies city and filter-based filtering.
+     * Fetches food posts from Firestore, applies city-based and filter-based filtering.
      *
-     * @param city the city to filter posts by
+     * @param city The city used to filter posts.
      */
     protected void loadPosts(String city) {
         db.collection("posts")
@@ -117,7 +120,7 @@ public class FeedActivity extends AppCompatActivity {
                                 post.setDescription(document.getString("description"));
                                 post.setUserId(document.getString("userId"));
 
-                                // Decode image from Base64
+                                // Decode image from Base64 if available
                                 String base64Image = document.getString("imageBase64");
                                 if (base64Image != null) {
                                     Bitmap bitmap = decodeBase64ToBitmap(base64Image);
@@ -127,7 +130,7 @@ public class FeedActivity extends AppCompatActivity {
                                 post.setFilters((List<String>) document.get("filters"));
                                 post.setCity(document.getString("city"));
 
-                                // Filter by city
+                                // Filter by city (if city is provided and doesn't match, skip this post)
                                 if (!city.isEmpty() && (post.getCity() == null || !post.getCity().toLowerCase().contains(city.toLowerCase()))) {
                                     continue;
                                 }
@@ -151,12 +154,12 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds listeners to all filter checkboxes to reload posts when toggled.
+     * Attaches listeners to filter checkboxes to refresh the post list when toggled.
      */
     protected void setupFilterListeners() {
         CheckBox[] checkBoxes = {
                 extraKosherCheckBox, frizerCheckBox, pastriesCheckBox, vegetablesCheckBox,
-                kosherCheckBox,veganCheckBox, vegetarianCheckBox, glutenFreeCheckBox, hotCheckBox,
+                kosherCheckBox, veganCheckBox, vegetarianCheckBox, glutenFreeCheckBox, hotCheckBox,
                 coldCheckBox, closedCheckBox, dairyCheckBox, meatCheckBox
         };
 
@@ -168,8 +171,8 @@ public class FeedActivity extends AppCompatActivity {
     /**
      * Checks if a post matches the selected filters.
      *
-     * @param post the post to check
-     * @return true if the post matches all selected filters
+     * @param post The post to check.
+     * @return True if the post matches all selected filters, otherwise false.
      */
     protected boolean isPostMatchingFilters(Post post) {
         if (kosherCheckBox.isChecked() && !post.hasFilter("Kosher")) return false;
@@ -190,7 +193,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     /**
-     * Updates the UI to show or hide the empty state message.
+     * Updates the UI to show or hide the empty state message when no posts match the filters.
      */
     protected void updateEmptyState() {
         if (postsList.isEmpty()) {
@@ -203,10 +206,10 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     /**
-     * Decodes a Base64 string to a Bitmap image.
+     * Decodes a Base64-encoded string into a Bitmap.
      *
-     * @param base64String the Base64 encoded string
-     * @return the decoded Bitmap, or null if decoding fails
+     * @param base64String The Base64-encoded image string.
+     * @return A decoded Bitmap, or null if decoding fails.
      */
     protected Bitmap decodeBase64ToBitmap(String base64String) {
         try {
