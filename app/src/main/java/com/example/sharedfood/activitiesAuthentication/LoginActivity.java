@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         MainActivity.isAdmin(user, isAdmin -> {
             if (isAdmin) {
               
-                Toast.makeText(LoginActivity.this, "ברוך הבא, אדון מנהל! \n בשביל פעולות מנהלים לחץ על \"צור קשר\"", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, " מנהל! לפעולות מנהלים  \n לחץ על \"צור קשר\"", Toast.LENGTH_SHORT).show();
             }
 
             Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
