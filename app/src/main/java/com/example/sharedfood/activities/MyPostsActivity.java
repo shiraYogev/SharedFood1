@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.example.sharedfood.R;
 import com.example.sharedfood.post.MyPostsAdapter;
 import com.example.sharedfood.post.Post;
@@ -34,9 +33,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
 // Michel START 14/1/2025
+/**
+ * Activity class for displaying and managing the user's personal posts.
+ * Implements listeners for post deletion and editing.
+ */
 public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter.PostDeleteListener, MyPostsAdapter.PostEditListener {
-// Michael END 14/1/2025
+    // Michael END 14/1/2025
     private RecyclerView recyclerView;
     private MyPostsAdapter adapter;
     FirebaseFirestore db;
@@ -47,6 +51,10 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
     Post post;
     private static final String TAG = "MyPostsActivity";
 
+    /**
+     * Initializes the activity, sets up UI components, and loads the user's posts.
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,17 +74,26 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
         loadUserPosts();
     }
 
+    /**
+     * Configures the RecyclerView with a LinearLayoutManager and adapter.
+     */
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MyPostsAdapter(postsList, this, this); // Michael START-END 14.01.2025
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     * Sets up the FloatingActionButton to navigate to the post creation activity.
+     */
     private void setupAddButton() {
         FloatingActionButton fabAddPost = findViewById(R.id.fabAddPost);
         fabAddPost.setOnClickListener(v -> startActivity(new Intent(MyPostsActivity.this, ShareYourFoodActivity.class)));
     }
 
+    /**
+     * Loads the current user's posts from Firestore and populates the posts list.
+     */
     private void loadUserPosts() {
         if (auth.getCurrentUser() == null) return;
 
@@ -90,43 +107,42 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
                         postsList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             try {
-                                // קודם ניצור אובייקט Post מהדוקומנט
+                                // Create a new Post object from the document
                                 Post post = new Post();
 
-                                // נעתיק את הנתונים הבסיסיים
+                                // Copy basic data
                                 post.setUserId(document.getString("userId"));
                                 post.setDescription(document.getString("description"));
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                // שחזור התמונה
+                                // Handle image reconstruction from Base64
                                 String base64Image = document.getString("imageBase64");
                                 if (base64Image != null) {
                                     Bitmap bitmap = decodeBase64ToBitmap(base64Image);
-                                    post.setImageBitmap(bitmap); // ודאי שהשדה נוסף למחלקת Post
+                                    post.setImageBitmap(bitmap); // Ensure this field exists in the Post class
                                 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                // טיפול ברשימת הפילטרים
+
+                                // Handle filters list
                                 @SuppressWarnings("unchecked")
                                 List<String> filters = (List<String>) document.get("filters");
                                 post.setFilters(filters);
 
-                                // טיפול ב-imageUrl
+                                // Handle image URL
                                 String imageUrl = document.getString("imageUrl");
                                 post.setImageUrl(imageUrl);
 
-                                // טיפול ב-imageUri - המרה מ-String ל-Uri
+                                // Handle image URI - convert String to Uri
                                 String imageUriString = document.getString("imageUri");
                                 if (imageUriString != null && !imageUriString.isEmpty()) {
                                     post.setImageUri(Uri.parse(imageUriString));
                                 }
 
-                                // טיפול במיקום
+                                // Handle location
                                 GeoPoint geoPoint = document.getGeoPoint("location");
                                 if (geoPoint != null) {
                                     post.setLocation(geoPoint);
                                 }
 
-                                // טיפול בעיר
+                                // Handle city
                                 String city = document.getString("city");
                                 post.setCity(city);
 
@@ -147,6 +163,9 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
                 });
     }
 
+    /**
+     * Updates the visibility of the RecyclerView and empty state text based on the posts list.
+     */
     private void updateEmptyState() {
         if (postsList.isEmpty()) {
             emptyStateText.setVisibility(View.VISIBLE);
@@ -157,6 +176,10 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
         }
     }
 
+    /**
+     * Handles the edit action for a post by launching the EditPostActivity.
+     * @param post The post to be edited.
+     */
     @Override
     public void onEditClick(Post post) {
         Intent intent = new Intent(this, EditPostActivity.class);
@@ -164,6 +187,10 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
         startActivity(intent);
     }
 
+    /**
+     * Displays a confirmation dialog for deleting a post.
+     * @param post The post to be deleted.
+     */
     @Override
     public void onDeleteClick(Post post) {
         new AlertDialog.Builder(this)
@@ -174,6 +201,10 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
                 .show();
     }
 
+    /**
+     * Deletes a specific post from Firestore based on user ID and description.
+     * @param post The post to delete.
+     */
     private void deletePost(Post post) {
         if (auth.getCurrentUser() == null) return;
 
@@ -193,7 +224,12 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
                     }
                 });
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Decodes a Base64 string into a Bitmap image (unused duplicate method).
+     * @param base64String The Base64 string to decode.
+     * @return The decoded Bitmap or null if decoding fails.
+     */
     private Bitmap decodeBase64ToImage(String base64String) {
         try {
             byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
@@ -204,6 +240,11 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
         }
     }
 
+    /**
+     * Reads a Base64 string from a file.
+     * @param filePath The path to the file containing the Base64 string.
+     * @return The Base64 string or null if reading fails.
+     */
     public String readBase64FromFile(String filePath) {
         try {
             File file = new File(filePath);
@@ -217,6 +258,12 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
             return null;
         }
     }
+
+    /**
+     * Decodes a Base64 string into a Bitmap image.
+     * @param base64String The Base64 string to decode.
+     * @return The decoded Bitmap or null if decoding fails.
+     */
     private Bitmap decodeBase64ToBitmap(String base64String) {
         try {
             byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
@@ -226,5 +273,4 @@ public class MyPostsActivity extends AppCompatActivity implements MyPostsAdapter
             return null;
         }
     }
-
 }

@@ -1,13 +1,12 @@
 package com.example.sharedfood.activities;
 
+// Imports for Android components, Firebase authentication, and Firestore database
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.sharedfood.R;
 import com.example.sharedfood.activitiesAuthentication.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,29 +14,40 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * Activity class for managing the user's personal area, including displaying user details,
+ * logging out, and deleting the account.
+ */
 public class PersonalAreaActivity extends AppCompatActivity {
 
+    // UI elements and Firebase instances
     private TextView userDetailsTextView;
     private Button logoutButton, deleteAccountButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    /**
+     * Initializes the activity, sets up UI components, and configures button listeners.
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_area);
 
+        // Initialize UI elements
         userDetailsTextView = findViewById(R.id.userDetailsTextView);
         logoutButton = findViewById(R.id.logoutButton);
         deleteAccountButton = findViewById(R.id.deleteAccountButton);
 
+        // Initialize Firebase instances
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // הצגת פרטי המשתמש
+        // Display the logged-in user's details
         displayUserDetails();
 
-        // התנתקות
+        // Set up logout button listener
         logoutButton.setOnClickListener(v -> {
             mAuth.signOut();
             Intent intent = new Intent(PersonalAreaActivity.this, LoginActivity.class);
@@ -45,17 +55,21 @@ public class PersonalAreaActivity extends AppCompatActivity {
             finish();
         });
 
-        // מחיקת חשבון
+        // Set up delete account button listener
         deleteAccountButton.setOnClickListener(v -> deleteAccount());
     }
 
+    /**
+     * Retrieves and displays the current user's email and number of posts from Firestore.
+     * Updates the UI accordingly.
+     */
     private void displayUserDetails() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            // הצגת אימייל
+            // Display user's email
             String email = "Email: " + user.getEmail();
 
-            // אחזור כמות הפוסטים מהקולקציה
+            // Query Firestore to get the number of posts by the user
             db.collection("foodPosts")
                     .whereEqualTo("userId", user.getUid())
                     .get()
@@ -75,6 +89,10 @@ public class PersonalAreaActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Deletes the current user's account from Firebase Authentication.
+     * Shows a success or failure message and redirects to the login screen on success.
+     */
     private void deleteAccount() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
