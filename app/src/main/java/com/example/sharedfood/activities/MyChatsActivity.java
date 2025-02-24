@@ -19,6 +19,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity class for displaying and managing the user's chats.
+ * Implements a listener for chat selection.
+ */
 public class MyChatsActivity extends AppCompatActivity implements MyChatsAdapter.OnChatClickListener {
 
     private RecyclerView chatListRecyclerView;
@@ -27,14 +31,20 @@ public class MyChatsActivity extends AppCompatActivity implements MyChatsAdapter
     private FirebaseFirestore db;
     private String currentUserId;
 
+    /**
+     * Initializes the activity, sets up the RecyclerView, and loads the user's chats.
+     * @param savedInstanceState The saved state of the activity, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_chats);
 
+        // Initialize Firebase Firestore and get current user ID
         db = FirebaseFirestore.getInstance();
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        // Set up RecyclerView and adapter
         chatListRecyclerView = findViewById(R.id.chatListRecyclerView);
         chatList = new ArrayList<>();
         myChatsAdapter = new MyChatsAdapter(chatList, this);
@@ -42,27 +52,32 @@ public class MyChatsActivity extends AppCompatActivity implements MyChatsAdapter
         chatListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatListRecyclerView.setAdapter(myChatsAdapter);
 
-        // טעינת הצ'אטים מה-Firebase
+        // Load the user's chats from Firebase
         loadUserChats();
     }
 
+    /**
+     * Loads the chats where the current user is a participant from Firestore.
+     */
     private void loadUserChats() {
         db.collection("chats")
-                .whereArrayContains("participants", currentUserId)  // מצא את כל הצ'אטים שהמשתמש חלק מהם
+                .whereArrayContains("participants", currentUserId)  // Find all chats where the user is a participant
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         chatList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
+                            // Extract chat details from the document
                             String chatId = document.getId();
                             List<String> participants = (List<String>) document.get("participants");
-                            Timestamp lastUpdated = document.getTimestamp("lastUpdated"); // השגת ה-Timestamp
+                            Timestamp lastUpdated = document.getTimestamp("lastUpdated"); // Retrieve the timestamp
 
-                            // יצירת אובייקט Chat לכל שיחה
+                            // Create a Chat object for each conversation
                             Chat chat = new Chat(chatId, participants, lastUpdated);
                             chatList.add(chat);
                         }
 
+                        // Update UI based on whether chats were found
                         if (chatList.isEmpty()) {
                             Toast.makeText(MyChatsActivity.this, "אין צ'אטים זמינים", Toast.LENGTH_SHORT).show();
                         } else {
@@ -74,10 +89,13 @@ public class MyChatsActivity extends AppCompatActivity implements MyChatsAdapter
                 });
     }
 
-
+    /**
+     * Handles a chat click event by navigating to the ChatActivity with the selected chat ID.
+     * @param chatId The ID of the clicked chat.
+     */
     @Override
     public void onChatClick(String chatId) {
-        // מעבר לאקטיביטי של הצ'אט
+        // Navigate to the chat activity
         Intent intent = new Intent(MyChatsActivity.this, ChatActivity.class);
         intent.putExtra("chatId", chatId);
         intent.putExtra("currentUserId", currentUserId);
