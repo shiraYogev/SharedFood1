@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.sharedfood.ChatActivity;
+import com.example.sharedfood.activities.ChatActivity;
 import com.example.sharedfood.R;
 import com.example.sharedfood.chat.ChatManager;
 import com.google.android.material.chip.Chip;
