@@ -320,14 +320,24 @@ public class ShareYourFoodActivity extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = createImageFile();
             if (photoFile != null) {
-                imageUri = Uri.fromFile(photoFile);
+                // שימוש ב-FileProvider במקום Uri.fromFile
+                imageUri = androidx.core.content.FileProvider.getUriForFile(
+                        this,
+                        "com.example.sharedfood.fileprovider",  // יש להשתמש בשם החבילה שלך + .fileprovider
+                        photoFile
+                );
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+
+                // חשוב: הוספת הרשאות קריאה וכתיבה לאפליקציית המצלמה
+                takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
                 try {
                     cameraLauncher.launch(takePictureIntent);
                 } catch (Exception e) {
+                    Log.e("Camera", "Error opening camera: " + e.getMessage());
                     Toast.makeText(this, "Error opening camera", Toast.LENGTH_SHORT).show();
                 }
-                cameraLauncher.launch(takePictureIntent);
             }
         } else {
             Toast.makeText(this, "No camera app available", Toast.LENGTH_SHORT).show();
