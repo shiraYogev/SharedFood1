@@ -1,5 +1,5 @@
 package com.example.sharedfood.activitiesAdmin;
-
+// activitiesAdmin
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
