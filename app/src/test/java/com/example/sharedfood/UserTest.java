@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 
 import com.example.sharedfood.user.User;
 import com.example.sharedfood.user.UserAdapter;
-import com.example. sharedfood. user. UserAdapter. UserViewHolder;
+import com.example.sharedfood.user.UserAdapter.UserViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
