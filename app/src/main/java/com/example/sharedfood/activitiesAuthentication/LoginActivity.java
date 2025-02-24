@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
         MainActivity.isAdmin(user, isAdmin -> {
             if (isAdmin) {
                 // Display an admin-specific welcome message
-                Toast.makeText(LoginActivity.this, "ברוך הבא, אדון מנהל! \n בשביל פעולות מנהלים לחץ על \"צור קשר\"", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, " מנהל! לפעולות מנהלים  \n לחץ על \"צור קשר\"", Toast.LENGTH_SHORT).show();
             }
 
             // Navigate to the HomePageActivity regardless of admin status
