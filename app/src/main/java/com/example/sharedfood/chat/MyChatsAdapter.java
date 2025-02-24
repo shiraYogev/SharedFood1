@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sharedfood.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -56,12 +57,17 @@ public class MyChatsAdapter extends RecyclerView.Adapter<MyChatsAdapter.ChatView
         // קבלת מזהה המשתמש השני
         String otherUserId = chat.getOtherUserId();
 
-        // שליפת שם המשתמש השני
-        db.collection("users").document(otherUserId).get()
+        db.collection("users")
+                .whereEqualTo("userId", otherUserId)  // מחפש לפי המייל
+                .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        String username = task.getResult().getString("username");
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        // קבלת התוצאה כ-DocumentSnapshot
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0); // Assuming there's only one match
+                        String username = document.getString("username");
                         holder.usernameText.setText(username != null ? username : "Unknown User");
+                    } else {
+                        holder.usernameText.setText("User not found");
                     }
                 });
 
