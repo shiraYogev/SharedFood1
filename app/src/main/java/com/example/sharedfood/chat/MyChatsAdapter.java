@@ -17,29 +17,44 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying a list of chats in a RecyclerView.
+ */
 public class MyChatsAdapter extends RecyclerView.Adapter<MyChatsAdapter.ChatViewHolder> {
-    private List<Chat> chatList;
-    protected OnChatClickListener listener;
-    protected FirebaseFirestore db;
+    private List<Chat> chatList; // List of chat objects
+    protected OnChatClickListener listener; // Listener for chat item clicks
+    protected FirebaseFirestore db; // Firestore database reference
 
-    // Constructor
+    /**
+     * Constructor to initialize the adapter with a list of chats.
+     *
+     * @param chatList List of chat objects.
+     * @param listener Listener for handling chat item clicks.
+     */
     public MyChatsAdapter(List<Chat> chatList, OnChatClickListener listener) {
         this.chatList = chatList;
         this.listener = listener;
         db = FirebaseFirestore.getInstance();
     }
 
-    // ViewHolder for Chat Item
+    /**
+     * ViewHolder class that represents each chat item in the RecyclerView.
+     */
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView usernameText;
-        ImageButton deleteChatButton;
-        View chatCard;
+        TextView usernameText; // Displays the other user's name
+        ImageButton deleteChatButton; // Button to delete the chat
+        View chatCard; // The entire chat item view (clickable)
 
+        /**
+         * Constructor for the ViewHolder.
+         *
+         * @param view The layout view for each chat item.
+         */
         public ChatViewHolder(View view) {
             super(view);
             usernameText = view.findViewById(R.id.usernameText);
-            deleteChatButton = view.findViewById(R.id.deleteChatButton);  // כפתור מחיקה
-            chatCard = view.findViewById(R.id.chatCard);  // כרטיס הצ'אט כולו (ללחיצה)
+            deleteChatButton = view.findViewById(R.id.deleteChatButton);
+            chatCard = view.findViewById(R.id.chatCard);
         }
     }
 
@@ -52,18 +67,19 @@ public class MyChatsAdapter extends RecyclerView.Adapter<MyChatsAdapter.ChatView
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        Chat chat = chatList.get(position);
+        Chat chat = chatList.get(position); // Retrieve the chat at the given position
 
-        // קבלת מזהה המשתמש השני
+        // Retrieve the ID of the other user in the chat
         String otherUserId = chat.getOtherUserId();
 
+        // Fetch the username of the other user from Firestore
         db.collection("users")
-                .whereEqualTo("userId", otherUserId)  // מחפש לפי המייל
+                .whereEqualTo("userId", otherUserId) // Searching by userId
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        // קבלת התוצאה כ-DocumentSnapshot
-                        DocumentSnapshot document = task.getResult().getDocuments().get(0); // Assuming there's only one match
+                        // Retrieve the first matching document
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
                         String username = document.getString("username");
                         holder.usernameText.setText(username != null ? username : "Unknown User");
                     } else {
@@ -71,25 +87,25 @@ public class MyChatsAdapter extends RecyclerView.Adapter<MyChatsAdapter.ChatView
                     }
                 });
 
-        // הוספת פעולה ללחיצה על כרטיס הצ'אט
+        // Handle clicking on a chat item
         holder.chatCard.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onChatClick(chat.getChatId());
             }
         });
 
-        // הוספת פעולה לכפתור המחיקה
+        // Handle chat deletion when clicking the delete button
         holder.deleteChatButton.setOnClickListener(v -> {
-            // טיפול בהסרת הצ'אט מה-Firebase
+            // Remove the chat from Firestore
             db.collection("chats").document(chat.getChatId()).delete()
                     .addOnSuccessListener(aVoid -> {
-                        // הצלחה במחיקת הצ'אט
+                        // Successfully deleted chat
                         chatList.remove(position);
                         notifyItemRemoved(position);
                         Toast.makeText(v.getContext(), "Chat deleted successfully", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        // שגיאה במחיקת הצ'אט
+                        // Failed to delete chat
                         Toast.makeText(v.getContext(), "Failed to delete chat", Toast.LENGTH_SHORT).show();
                     });
         });
@@ -97,10 +113,13 @@ public class MyChatsAdapter extends RecyclerView.Adapter<MyChatsAdapter.ChatView
 
     @Override
     public int getItemCount() {
-        return chatList.size();
+        return chatList.size(); // Return the number of chat items
     }
 
+    /**
+     * Interface to handle chat item click events.
+     */
     public interface OnChatClickListener {
-        void onChatClick(String chatId);  // פעולה כאשר לוחצים על שיחה
+        void onChatClick(String chatId); // Called when a chat is clicked
     }
 }

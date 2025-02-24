@@ -1,5 +1,5 @@
 package com.example.sharedfood.activitiesAdmin;
-// activitiesAdmin
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,6 +21,10 @@ import java.util.Map;
 
 import com.example.sharedfood.user.User;
 
+/**
+ * Activity for managing the list of users.
+ * Allows administrators to view users, ban/unban them, apply temporary bans, and promote them to admins.
+ */
 public class UserListActivity extends AppCompatActivity {
     private static final String TAG = "UserListActivity";
     private RecyclerView userRecyclerView;
@@ -33,42 +37,42 @@ public class UserListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
-        // Initialize Firebase
+        // Initialize Firebase services
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // Set up RecyclerView
+        // Set up RecyclerView for displaying users
         userRecyclerView = findViewById(R.id.userRecyclerView);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         userAdapter = new UserAdapter(new ArrayList<>(), this::performActionOnUser);
         userRecyclerView.setAdapter(userAdapter);
 
-        // Load user list
+        // Load user list from Firestore
         loadUsers();
     }
 
     private void loadUsers() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // שליפת רשימת המנהלים
+        // Retrieve the list of admin users
         db.collection("admins").get().addOnCompleteListener(adminsTask -> {
             if (adminsTask.isSuccessful()) {
                 List<String> adminEmails = new ArrayList<>();
                 adminsTask.getResult().forEach(admin -> adminEmails.add(admin.getId()));
 
-                // שליפת כל המשתמשים שאינם מנהלים
+                // Retrieve the list of regular users (excluding admins)
                 db.collection("users").get().addOnCompleteListener(usersTask -> {
                     if (usersTask.isSuccessful()) {
                         List<User> userList = new ArrayList<>();
                         usersTask.getResult().forEach(document -> {
                             String email = document.getId();
-                            if (!adminEmails.contains(email)) { // רק אם המשתמש אינו מנהל
+                            if (!adminEmails.contains(email)) { // Only add non-admin users
                                 boolean isBanned = document.getBoolean("is_banned") != null && document.getBoolean("is_banned");
                                 Long tempBanTime = document.contains("temp_ban_time") ? document.getLong("temp_ban_time") : null;
                                 userList.add(new User(email, isBanned, tempBanTime));
                             }
                         });
-                        userAdapter.updateUsers(userList); // עדכון רשימת המשתמשים בתצוגה
+                        userAdapter.updateUsers(userList); // Update the user list in the UI
                     } else {
                         Log.e(TAG, "Failed to load users", usersTask.getException());
                     }
@@ -79,78 +83,77 @@ public class UserListActivity extends AppCompatActivity {
         });
     }
 
-
-
+    /**
+     * Handles different actions on a user, such as banning, temporary banning, or promoting to admin.
+     */
     private void performActionOnUser(User user, String action) {
         switch (action) {
             case "ban":
                 banUser(user);
                 break;
             case "temp_ban":
-                showTempBanDialog(user); // קריאה לדיאלוג לבחירת זמן החסימה
+                showTempBanDialog(user); // Show dialog for selecting temporary ban duration
                 break;
             case "promote":
                 promoteToAdmin(user);
                 break;
         }
     }
+
+    /**
+     * Displays a dialog to allow the admin to choose a temporary ban duration.
+     */
     private void showTempBanDialog(User user) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("בחר את משך החסימה")
                 .setItems(new CharSequence[]{"3 שעות", "יום אחד", "3 ימים", "שבוע", "חודש"}, (dialog, which) -> {
                     long durationInHours = 0;
+                    // Convert selected option to the corresponding duration in hours
                     switch (which) {
-                        case 0: // 3 שעות
-                            durationInHours = 3;
-                            break;
-                        case 1: // יום אחד
-                            durationInHours = 24;
-                            break;
-                        case 2: // 3 ימים
-                            durationInHours = 72;
-                            break;
-                        case 3: // שבוע
-                            durationInHours = 168;
-                            break;
-                        case 4: // חודש
-                            durationInHours = 720;
-                            break;
+                        case 0: durationInHours = 3; break;   // 3 hours
+                        case 1: durationInHours = 24; break;  // 1 day
+                        case 2: durationInHours = 72; break;  // 3 days
+                        case 3: durationInHours = 168; break; // 1 week
+                        case 4: durationInHours = 720; break; // 1 month
                     }
+
                     tempBanUser(user, durationInHours);
                 })
                 .setNegativeButton("ביטול", null)
                 .show();
     }
 
-
+    /**
+     * Bans or unbans a user.
+     */
     private void banUser(User user) {
-        boolean isBanned = user.isBanned(); // האם המשתמש כרגע חסום
+        boolean isBanned = user.isBanned(); // Check if the user is currently banned
         db.collection("users").document(user.getEmail())
-                .update("is_banned", !isBanned) // עדכון שדה is_banned
+                .update("is_banned", !isBanned) // Toggle the ban status
                 .addOnSuccessListener(aVoid -> {
                     if (isBanned) {
-                        // אם המשתמש היה חסום - ביטול חסימה
+                        // If the user was banned, remove them from the banned list
                         db.collection("banned_users").document(user.getEmail())
                                 .delete()
                                 .addOnSuccessListener(aVoid1 -> {
                                     Toast.makeText(this, "החסימה בוטלה בהצלחה", Toast.LENGTH_SHORT).show();
-                                    loadUsers(); // עדכון רשימה
+                                    loadUsers(); // Refresh the user list
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, "Error removing user from banned_users", e);
                                     Toast.makeText(this, "שגיאה בהסרת המשתמש מהאוסף banned_users", Toast.LENGTH_SHORT).show();
                                 });
                     } else {
-                        // אם המשתמש לא היה חסום - הוספת חסימה
+                        // If the user was not banned, add them to the banned list
                         Map<String, Object> bannedData = new HashMap<>();
                         bannedData.put("email", user.getEmail());
-                        bannedData.put("banned_at", System.currentTimeMillis()); // זמן החסימה
+                        bannedData.put("banned_at", System.currentTimeMillis());
 
                         db.collection("banned_users").document(user.getEmail())
                                 .set(bannedData)
                                 .addOnSuccessListener(aVoid1 -> {
                                     Toast.makeText(this, "המשתמש נחסם בהצלחה", Toast.LENGTH_SHORT).show();
-                                    loadUsers(); // עדכון רשימה
+                                    loadUsers(); // Refresh the user list
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, "Error adding user to banned_users", e);
@@ -164,16 +167,15 @@ public class UserListActivity extends AppCompatActivity {
                 });
     }
 
-
-
-
+    /**
+     * Applies a temporary ban on a user for the selected duration.
+     */
     private void tempBanUser(User user, long durationInHours) {
         long currentTimeMillis = System.currentTimeMillis();
-        long banEndTimeMillis = currentTimeMillis + (durationInHours * 60 * 60 * 1000); // חישוב זמן פקיעת החסימה
+        long banEndTimeMillis = currentTimeMillis + (durationInHours * 60 * 60 * 1000);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // עדכון המשתמש באוסף temp_banned_users
         Map<String, Object> tempBanData = new HashMap<>();
         tempBanData.put("email", user.getEmail());
         tempBanData.put("ban_end_time", banEndTimeMillis);
@@ -183,7 +185,7 @@ public class UserListActivity extends AppCompatActivity {
                 .set(tempBanData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "משתמש נחסם זמנית", Toast.LENGTH_SHORT).show();
-                    loadUsers(); // עדכון הרשימה
+                    loadUsers();
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error applying temporary ban", e);
@@ -191,7 +193,9 @@ public class UserListActivity extends AppCompatActivity {
                 });
     }
 
-
+    /**
+     * Checks and removes expired temporary bans.
+     */
     private void checkAndRemoveExpiredTempBans() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         long currentTimeMillis = System.currentTimeMillis();
@@ -202,7 +206,6 @@ public class UserListActivity extends AppCompatActivity {
                     querySnapshot.forEach(document -> {
                         Long banEndTime = document.getLong("ban_end_time");
                         if (banEndTime != null && banEndTime < currentTimeMillis) {
-                            // הסרת המשתמש מאוסף temp_banned_users
                             db.collection("temp_banned_users").document(document.getId()).delete()
                                     .addOnSuccessListener(aVoid -> Log.d(TAG, "חסימה זמנית הסתיימה עבור: " + document.getId()))
                                     .addOnFailureListener(e -> Log.e(TAG, "שגיאה בהסרת חסימה זמנית עבור: " + document.getId(), e));
@@ -212,29 +215,22 @@ public class UserListActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e(TAG, "שגיאה בגישה לאוסף temp_banned_users", e));
     }
 
-
-
-
+    /**
+     * Promotes a user to admin status.
+     */
     private void promoteToAdmin(User user) {
-        Log.d(TAG, "promoteToAdmin: Trying to promote " + user.getEmail()); // לצורך בדיקה
-
-        // Prepare admin data
         Map<String, Object> adminData = new HashMap<>();
         adminData.put("email", user.getEmail());
-        adminData.put("isSuperAdmin", false); // Adjust this based on your logic
+        adminData.put("isSuperAdmin", false);
 
-        // Add user to the 'admins' collection
         db.collection("admins").document(user.getEmail())
-                .set(adminData) // Correctly serialize the admin data
+                .set(adminData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "המשתמש הועלה לדרגת מנהל", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "promoteToAdmin: Success for " + user.getEmail()); // לצורך בדיקה
-                    loadUsers(); // Reload list
+                    loadUsers();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "promoteToAdmin: Error for " + user.getEmail(), e); // לצורך בדיקה
                     Toast.makeText(this, "שגיאה בהפיכת המשתמש למנהל", Toast.LENGTH_SHORT).show();
                 });
     }
-
 }

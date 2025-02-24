@@ -18,17 +18,32 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
+/**
+ * Adapter for displaying chat messages in a RecyclerView.
+ */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
-    private List<Message> messagesList;
+    private List<Message> messagesList; // List of messages to be displayed
 
+    /**
+     * Constructor to initialize the adapter with a list of messages.
+     *
+     * @param messagesList List of chat messages.
+     */
     public MessageAdapter(List<Message> messagesList) {
         this.messagesList = messagesList;
     }
 
+    /**
+     * ViewHolder class that represents each chat message item.
+     */
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timestampText;
+        TextView messageText, timestampText; // Message content and timestamp views
 
+        /**
+         * Constructor for the ViewHolder.
+         *
+         * @param view The layout view for each chat message.
+         */
         public MessageViewHolder(View view) {
             super(view);
             messageText = view.findViewById(R.id.messageText);
@@ -46,36 +61,37 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        Message message = messagesList.get(position);
-        holder.messageText.setText(message.getMessageText());
+        Message message = messagesList.get(position); // Get the current message
+        holder.messageText.setText(message.getMessageText()); // Display the message text
 
-        // הצגת ה-Timestamp כ-String
-        Timestamp timestamp = message.getTimestamp(); // השגת ה-Timestamp
+        // Retrieve the message timestamp
+        Timestamp timestamp = message.getTimestamp();
 
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // השגת ה-userId של המשתמש הנוכחי
+        // Get the current user's ID to determine message alignment
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        // Convert and display the timestamp if available
         if (timestamp != null) {
-            String time = timestamp.toDate().toString(); // המרת ה-Timestamp ל-String
+            String time = timestamp.toDate().toString(); // Convert Timestamp to String
             holder.timestampText.setText(time);
         } else {
-            holder.timestampText.setText("");  // אם ה-Timestamp לא קיים
+            holder.timestampText.setText("");  // Display empty if no timestamp is available
         }
 
-        // אם ההודעה שייכת למשתמש הנוכחי
+        // Align the message based on whether it was sent by the current user
         if (message.getUserId().equals(currentUserId)) {
-            // בצד ימין עם רקע ירוק בהיר
+            // Messages from the current user appear on the right with a light green background
             holder.messageText.setBackgroundResource(R.drawable.message_background_right);
-            holder.messageText.setGravity(Gravity.END);  // align to right
+            holder.messageText.setGravity(Gravity.END);  // Align text to the right
         } else {
-            // בצד שמאל עם רקע ירוק כהה
+            // Messages from other users appear on the left with a dark green background
             holder.messageText.setBackgroundResource(R.drawable.message_background_left);
-            holder.messageText.setGravity(Gravity.START);  // align to left
+            holder.messageText.setGravity(Gravity.START);  // Align text to the left
         }
     }
 
-
     @Override
     public int getItemCount() {
-        return messagesList.size();
+        return messagesList.size(); // Return the number of messages
     }
 }

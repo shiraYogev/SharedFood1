@@ -17,6 +17,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity for displaying and managing the list of administrators.
+ * Allows removing admins except for the super admin.
+ */
 public class AdminListActivity extends AppCompatActivity {
     private static final String TAG = "AdminListActivity";
     private RecyclerView adminRecyclerView;
@@ -24,34 +28,44 @@ public class AdminListActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
+    /**
+     * Called when the activity is created.
+     * Initializes UI components and loads the admin list.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_list);
 
-        // Initialize Firebase
+        // Initialize Firebase services
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // Set up RecyclerView
+        // Set up RecyclerView for displaying admins
         adminRecyclerView = findViewById(R.id.adminRecyclerView);
         adminRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize adapter with an empty list and set up the remove admin listener
         adminAdapter = new AdminAdapter(new ArrayList<>(), this::removeAdmin);
         adminRecyclerView.setAdapter(adminAdapter);
 
-        // Load admin list
+        // Load the list of admins from Firestore
         loadAdmins();
     }
 
+    /**
+     * Loads the list of admins from Firestore and updates the RecyclerView.
+     */
     private void loadAdmins() {
         db.collection("admins").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 List<Admin> adminList = new ArrayList<>();
                 task.getResult().forEach(document -> {
                     String email = document.getId();
-                    boolean isSuperAdmin = email.equals("mici9578@gmail.com");
+                    boolean isSuperAdmin = email.equals("mici9578@gmail.com"); // Identifies the super admin
                     adminList.add(new Admin(email, isSuperAdmin));
                 });
+                // Update the adapter with the retrieved admin list
                 adminAdapter.updateAdmins(adminList);
             } else {
                 Log.e(TAG, "Failed to load admins", task.getException());
@@ -60,6 +74,11 @@ public class AdminListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Removes an admin from Firestore unless they are the super admin.
+     *
+     * @param email The email of the admin to be removed.
+     */
     private void removeAdmin(String email) {
         if (email.equals("mici9578@gmail.com")) {
             Toast.makeText(this, "לא ניתן להסיר את המנהל הראשי", Toast.LENGTH_SHORT).show();
@@ -70,7 +89,7 @@ public class AdminListActivity extends AppCompatActivity {
                 .delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "המנהל הוסר בהצלחה", Toast.LENGTH_SHORT).show();
-                    loadAdmins(); // Reload list
+                    loadAdmins(); // Refresh the admin list
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error removing admin: " + e.getMessage(), e);

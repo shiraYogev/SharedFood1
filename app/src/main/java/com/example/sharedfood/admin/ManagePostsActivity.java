@@ -27,7 +27,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-    public class ManagePostsActivity extends AppCompatActivity implements MyPostsAdapter.PostDeleteListener, MyPostsAdapter.PostEditListener {
+/**
+ * Activity to manage and display posts for the admin user.
+ * Allows viewing, editing, and deleting posts from Firebase.
+ */
+public class ManagePostsActivity extends AppCompatActivity implements MyPostsAdapter.PostDeleteListener, MyPostsAdapter.PostEditListener {
 
     private RecyclerView recyclerView;
     private MyPostsAdapter adapter;
@@ -36,6 +40,10 @@ import java.util.List;
     private List<Post> postsList;
     private static final String TAG = "ManagePostsActivity";
 
+    /**
+     * Called when the activity is created.
+     * Initializes Firebase, views, and sets up the RecyclerView.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,79 +61,89 @@ import java.util.List;
         loadAllPosts();
     }
 
+    /**
+     * Sets up the RecyclerView with a LinearLayoutManager and adapter.
+     */
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MyPostsAdapter(postsList, this, this);
         recyclerView.setAdapter(adapter);
     }
 
-        public void loadAllPosts() {
-            db.collection("posts")
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            postsList.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                try {
-                                    // Create a Post object from the document
-                                    Post post = new Post();
+    /**
+     * Loads all posts from Firebase Firestore.
+     * Converts the documents to Post objects and updates the RecyclerView.
+     */
+    public void loadAllPosts() {
+        db.collection("posts")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        postsList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            try {
+                                // Create a Post object from the document
+                                Post post = new Post();
 
-                                    // Set basic fields
-                                    post.setUserId(document.getString("userId"));
-                                    post.setDescription(document.getString("description"));
+                                // Set basic fields
+                                post.setUserId(document.getString("userId"));
+                                post.setDescription(document.getString("description"));
 
-                                    // Decode and set the image
-                                    String base64Image = document.getString("imageBase64");
-                                    if (base64Image != null) {
-                                        Bitmap bitmap = decodeBase64ToBitmap(base64Image);
-                                        post.setImageBitmap(bitmap);
-                                    }
-
-                                    // Handle filters
-                                    @SuppressWarnings("unchecked")
-                                    List<String> filters = (List<String>) document.get("filters");
-                                    post.setFilters(filters);
-
-                                    // Handle imageUrl
-                                    String imageUrl = document.getString("imageUrl");
-                                    post.setImageUrl(imageUrl);
-
-                                    // Handle imageUri
-                                    String imageUriString = document.getString("imageUri");
-                                    if (imageUriString != null && !imageUriString.isEmpty()) {
-                                        post.setImageUri(Uri.parse(imageUriString));
-                                    }
-
-                                    // Handle location
-                                    GeoPoint geoPoint = document.getGeoPoint("location");
-                                    if (geoPoint != null) {
-                                        post.setLocation(geoPoint);
-                                    }
-
-                                    // Handle city
-                                    String city = document.getString("city");
-                                    post.setCity(city);
-
-                                    // Set document ID
-                                    post.setId(document.getId());
-
-                                    postsList.add(post);
-
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error parsing document to Post: " + e.getMessage());
+                                // Decode and set the image
+                                String base64Image = document.getString("imageBase64");
+                                if (base64Image != null) {
+                                    Bitmap bitmap = decodeBase64ToBitmap(base64Image);
+                                    post.setImageBitmap(bitmap);
                                 }
+
+                                // Handle filters
+                                @SuppressWarnings("unchecked")
+                                List<String> filters = (List<String>) document.get("filters");
+                                post.setFilters(filters);
+
+                                // Handle imageUrl
+                                String imageUrl = document.getString("imageUrl");
+                                post.setImageUrl(imageUrl);
+
+                                // Handle imageUri
+                                String imageUriString = document.getString("imageUri");
+                                if (imageUriString != null && !imageUriString.isEmpty()) {
+                                    post.setImageUri(Uri.parse(imageUriString));
+                                }
+
+                                // Handle location
+                                GeoPoint geoPoint = document.getGeoPoint("location");
+                                if (geoPoint != null) {
+                                    post.setLocation(geoPoint);
+                                }
+
+                                // Handle city
+                                String city = document.getString("city");
+                                post.setCity(city);
+
+                                // Set document ID
+                                post.setId(document.getId());
+
+                                postsList.add(post);
+
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error parsing document to Post: " + e.getMessage());
                             }
-
-                            updateEmptyState();
-                            adapter.notifyDataSetChanged();
-
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                            Toast.makeText(ManagePostsActivity.this, "שגיאה בטעינת הפוסטים", Toast.LENGTH_SHORT).show();
                         }
-                    });
-        }
 
+                        updateEmptyState();
+                        adapter.notifyDataSetChanged();
+
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                        Toast.makeText(ManagePostsActivity.this, "שגיאה בטעינת הפוסטים", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Updates the empty state text visibility based on whether posts are available.
+     */
     private void updateEmptyState() {
         if (postsList.isEmpty()) {
             emptyStateText.setVisibility(View.VISIBLE);
@@ -136,6 +154,9 @@ import java.util.List;
         }
     }
 
+    /**
+     * Handles post editing. Starts the ShareYourFoodActivity with the selected post for editing.
+     */
     @Override
     public void onEditClick(Post post) {
         Intent intent = new Intent(this, ShareYourFoodActivity.class);
@@ -143,6 +164,9 @@ import java.util.List;
         startActivity(intent);
     }
 
+    /**
+     * Handles post deletion. Shows a confirmation dialog and deletes the post if confirmed.
+     */
     @Override
     public void onDeleteClick(Post post) {
         new AlertDialog.Builder(this)
@@ -153,6 +177,10 @@ import java.util.List;
                 .show();
     }
 
+    /**
+     * Deletes a post from Firebase Firestore.
+     * Refreshes the list of posts after deletion.
+     */
     public void deletePost(Post post) {
         db.collection("posts")
                 .document(post.getId())
@@ -164,6 +192,12 @@ import java.util.List;
                 .addOnFailureListener(e -> Toast.makeText(this, "שגיאה במחיקת הפוסט", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Decodes a Base64-encoded string into a Bitmap image.
+     *
+     * @param base64String The Base64 string representing the image.
+     * @return The decoded Bitmap image, or null if decoding failed.
+     */
     private Bitmap decodeBase64ToBitmap(String base64String) {
         try {
             byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
@@ -177,9 +211,8 @@ import java.util.List;
     public FirebaseFirestore getDb() {
         return db;
     }
+
     public void setDb(FirebaseFirestore db) {
         this.db = db;
     }
-
-
-    }
+}

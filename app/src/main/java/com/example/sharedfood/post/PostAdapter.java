@@ -22,17 +22,32 @@ import java.util.List;
 import java.util.UUID;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Adapter for displaying posts in a RecyclerView.
+ * Each post includes a description, location, filters, an image (if available), and a chat button.
+ */
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private List<Post> posts; // List of posts to display
     private Context context; // Context for accessing resources and starting activities
     private ChatManager chatManager; // Manager for chat functionalities
 
+    /**
+     * Constructor for initializing the adapter with a list of posts.
+     * @param posts List of posts to be displayed.
+     * @param context The application or activity context.
+     */
     public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
         this.context = context;
-        chatManager = new ChatManager();  // Initialize ChatManager
+        chatManager = new ChatManager();  // Initialize ChatManager for handling chat operations
     }
 
+    /**
+     * Creates a new ViewHolder instance when needed.
+     * @param parent The parent ViewGroup into which the new view will be added.
+     * @param viewType The view type of the new view.
+     * @return A new instance of PostViewHolder.
+     */
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,25 +55,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return new PostViewHolder(view);
     }
 
+    /**
+     * Binds data to the ViewHolder at a specific position.
+     * @param holder The ViewHolder to bind data to.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = posts.get(position);
 
+        // Set post description (fallback text if null)
         holder.descriptionText.setText(post.getDescription() != null ? post.getDescription() : "No description available");
+
+        // Set post location (fallback text if null)
         holder.locationText.setText(post.getCity() != null ? post.getCity() : "Location unavailable");
 
-        // Add filters (if any)
+        // Remove all filters before adding new ones
         holder.filtersChipGroup.removeAllViews();
         if (post.getFilters() != null) {
             for (String filter : post.getFilters()) {
                 Chip chip = new Chip(holder.filtersChipGroup.getContext());
                 chip.setText(filter);
-                chip.setCheckable(false);
+                chip.setCheckable(false); // Disable selection
                 holder.filtersChipGroup.addView(chip);
             }
         }
 
-        // Add image if available
+        // Set post image if available
         if (post.getImageBitmap() != null) {
             holder.imageView.setImageBitmap(post.getImageBitmap());
             holder.imageView.setVisibility(View.VISIBLE);
@@ -66,16 +89,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.imageView.setVisibility(View.GONE);
         }
 
-        // Set up chat button click
+        // Set up the chat button click event
         holder.chatButton.setOnClickListener(v -> {
-            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get current user ID
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get the current user ID
             String chatId = UUID.randomUUID().toString(); // Generate a unique chat ID
-            String postUserId = post.getUserId(); // Get post user's ID
+            String postUserId = post.getUserId(); // Get the post owner's user ID
 
-            // Create a new chat
-            chatManager.createChat(chatId, currentUserId, postUserId); // Pass current user ID and post user ID separately
+            // Create a new chat session
+            chatManager.createChat(chatId, currentUserId, postUserId);  // Pass current user ID and post user ID separately
 
-            // Start chat activity with the generated chat ID
+            // Start ChatActivity with the generated chat ID and current user ID
             Intent intent = new Intent(holder.itemView.getContext(), ChatActivity.class);
             intent.putExtra("chatId", chatId);
             intent.putExtra("currentUserId", currentUserId);
@@ -83,18 +106,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
     }
 
+    /**
+     * Returns the number of items in the adapter.
+     * @return The total number of posts.
+     */
     @Override
     public int getItemCount() {
         return posts.size(); // Return the number of posts
     }
 
+    /**
+     * ViewHolder class for holding and managing individual post items in the RecyclerView.
+     */
     public static class PostViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView descriptionText;
-        TextView locationText;
-        ChipGroup filtersChipGroup;
-        ImageButton chatButton;  // Chat button
+        ImageView imageView; // Image of the post
+        TextView descriptionText; // Post description
+        TextView locationText; // Post location
+        ChipGroup filtersChipGroup; // Group of filter chips
+        ImageButton chatButton; // Button to initiate a chat
 
+        /**
+         * Constructor for initializing UI components in the ViewHolder.
+         * @param view The item view.
+         */
         public PostViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.postImage);
